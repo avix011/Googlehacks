@@ -1,0 +1,681 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey Insights Dashboard — Data Analysis & Visualization</title>
+    <meta name="description" content="Interactive survey data dashboard with advanced filtering, charts, and pattern analysis for community survey insights.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="index.css?v=3">
+    <!-- Firebase Configuration Info -->
+    <script>
+        // Firebase initialization check happens in firebase-config.js
+        // This warning will only show if credentials contain placeholder YOUR_* patterns
+        console.log('🚀 SurveyLens Dashboard loading...');
+    </script>
+</head>
+<body>
+    <!-- Ambient Background Blobs -->
+    <div class="ambient-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline>
+                    <polyline points="7.5 19.79 7.5 14.6 3 12"></polyline>
+                    <polyline points="21 12 16.5 14.6 16.5 19.79"></polyline>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+            </div>
+            <span class="brand-name">SurveyLens</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-section="add-survey" id="nav-add-survey">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                <span>Add Survey</span>
+            </a>
+            <a href="#" class="nav-item" data-section="volunteer" id="nav-volunteer">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+                <span>Volunteer</span>
+            </a>
+            <a href="#" class="nav-item" data-section="assignments" id="nav-assignments">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                <span>Assignments</span>
+            </a>
+            <a href="#" class="nav-item" data-section="overview" id="nav-overview">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                <span>Overview</span>
+            </a>
+            <a href="#" class="nav-item" data-section="data-table" id="nav-data-table">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                <span>View Data</span>
+            </a>
+            <a href="#" class="nav-item" data-section="analytics" id="nav-analytics">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                <span>Analyze Data</span>
+            </a>
+
+            <a href="#" class="nav-item" data-section="patterns" id="nav-patterns">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                <span>Patterns</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="btn-reset-data" id="btn-reset-data" title="Clear all data and start fresh">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                Reset Data
+            </button>
+            <div class="data-status">
+                <div class="status-dot"></div>
+                <span id="record-count-sidebar">0 records loaded</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="main-content">
+        <!-- Top Bar -->
+        <header class="topbar">
+            <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+            <div class="topbar-title">
+                <h1 id="page-title">Dashboard Overview</h1>
+                <p class="topbar-subtitle" id="page-subtitle">Real-time survey analytics and insights</p>
+            </div>
+            <div class="topbar-actions">
+                <div class="search-box" id="global-search-box">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" placeholder="Search records..." id="global-search" autocomplete="off">
+                </div>
+            </div>
+        </header>
+
+        <!-- ============ ADD SURVEY SECTION ============ -->
+        <section class="content-section active" id="section-add-survey">
+            <div class="form-container">
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        </div>
+                        <div>
+                            <h2>New Survey Entry</h2>
+                            <p>Fill in the respondent's details below</p>
+                        </div>
+                    </div>
+
+                    <!-- Success Toast (hidden by default) -->
+                    <div class="form-toast" id="form-toast">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        <span>Survey entry saved successfully!</span>
+                    </div>
+
+                    <form id="survey-form" autocomplete="off" novalidate>
+                        <!-- Row 1: Personal Info -->
+                        <div class="form-section-title">👤 Personal Information</div>
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label for="field-name">Full Name <span class="required">*</span></label>
+                                <input type="text" id="field-name" placeholder="e.g. Rajesh Kumar" required>
+                                <span class="field-error" id="err-name"></span>
+                            </div>
+                            <div class="form-field">
+                                <label for="field-age">Age <span class="required">*</span></label>
+                                <input type="number" id="field-age" placeholder="e.g. 34" min="1" max="120" required>
+                                <span class="field-error" id="err-age"></span>
+                            </div>
+                            <div class="form-field">
+                                <label for="field-gender">Gender <span class="required">*</span></label>
+                                <select id="field-gender" required>
+                                    <option value="" disabled selected>Select gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <span class="field-error" id="err-gender"></span>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: Location & Date -->
+                        <div class="form-section-title">📍 Location & Date</div>
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label for="field-location">Village / Area <span class="required">*</span></label>
+                                <select id="field-location" required>
+                                    <option value="" disabled selected>Select location</option>
+                                    <option value="DELHI">DELHI</option>
+                                    <option value="BANGALORE">BANGALORE</option>
+                                    <option value="CHENNAI">CHENNAI</option>
+                                    <option value="PUNE">PUNE</option>
+                                </select>
+                                <span class="field-error" id="err-location"></span>
+                            </div>
+                            <div class="form-field">
+                                <label for="field-date">Survey Date <span class="required">*</span></label>
+                                <input type="date" id="field-date" placeholder="DD/MM/YYYY">
+                                <span class="field-error" id="err-date"></span>
+                            </div>
+                        </div>
+
+                        <!-- Row 4: Issues (multi-select) -->
+                        <div class="form-section-title">⚠️ Issues Faced</div>
+                        <div class="form-row">
+                            <div class="form-field full-width">
+                                <label>Select one or more issues <span class="required">*</span></label>
+                                <div class="issue-picker" id="issue-picker">
+                                    <label class="issue-option">
+                                        <input type="checkbox" name="issue" value="Health">
+                                        <span class="issue-chip"><span class="issue-chip-icon">🏥</span> Health</span>
+                                    </label>
+                                    <label class="issue-option">
+                                        <input type="checkbox" name="issue" value="Education">
+                                        <span class="issue-chip"><span class="issue-chip-icon">📚</span> Education</span>
+                                    </label>
+                                    <label class="issue-option">
+                                        <input type="checkbox" name="issue" value="Unemployment">
+                                        <span class="issue-chip"><span class="issue-chip-icon">💼</span> Unemployment</span>
+                                    </label>
+                                    <label class="issue-option">
+                                        <input type="checkbox" name="issue" value="Water">
+                                        <span class="issue-chip"><span class="issue-chip-icon">💧</span> Water</span>
+                                    </label>
+                                    <label class="issue-option">
+                                        <input type="checkbox" name="issue" value="Sanitation">
+                                        <span class="issue-chip"><span class="issue-chip-icon">🚽</span> Sanitation</span>
+                                    </label>
+                                    <label class="issue-option">
+                                        <input type="checkbox" name="issue" value="Infrastructure">
+                                        <span class="issue-chip"><span class="issue-chip-icon">🏗️</span> Infrastructure</span>
+                                    </label>
+                                    <label class="issue-option">
+                                        <input type="checkbox" name="issue" value="Poverty">
+                                        <span class="issue-chip"><span class="issue-chip-icon">🏚️</span> Poverty</span>
+                                    </label>
+                                    <label class="issue-option">
+                                        <input type="checkbox" name="issue" value="Nutrition">
+                                        <span class="issue-chip"><span class="issue-chip-icon">🍎</span> Nutrition</span>
+                                    </label>
+                                </div>
+                                <span class="field-error" id="err-issue"></span>
+                            </div>
+                        </div>
+
+                        <!-- Row 5: Additional notes -->
+                        <div class="form-section-title">📝 Additional Notes</div>
+                        <div class="form-row">
+                            <div class="form-field full-width">
+                                <label for="field-notes">Notes (optional)</label>
+                                <textarea id="field-notes" rows="3" placeholder="Any additional observations about this respondent..."></textarea>
+                            </div>
+                        </div>
+                        </div>
+
+                        <!-- Row 6: Verification -->
+                        <div class="form-section-title">🛡️ Verification</div>
+                        <div class="form-row">
+                            <div class="form-field full-width">
+                                <label for="field-image">Upload Geo-tagged Image (Proof of presence)</label>
+                                <input type="file" id="field-image" accept="image/*" capture="environment" style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; border: 1px dashed #555;">
+                                <div id="verification-preview" class="verification-preview" style="display: none; margin-top: 15px; position: relative; max-width: 300px;">
+                                    <img id="preview-img" src="" alt="Proof Preview" style="width: 100%; border-radius: 8px; border: 2px solid #10b981;" />
+                                    <div class="location-tag" id="location-tag" style="position: absolute; bottom: 10px; left: 10px; right: 10px; background: rgba(0,0,0,0.75); color: #10b981; padding: 5px 10px; border-radius: 4px; font-size: 11px; display: flex; align-items: center; gap: 5px;">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                        <span id="coords-text">Fetching location...</span>
+                                    </div>
+                                    <button type="button" class="btn-remove-image" id="btn-remove-image" style="position: absolute; top: 10px; right: 10px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer;">&times;</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="reset" class="btn btn-secondary" id="btn-form-reset">Clear Form</button>
+                            <button type="submit" class="btn btn-primary" id="btn-form-submit">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                Save Entry
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ VOLUNTEER SECTION ============ -->
+        <section class="content-section" id="section-volunteer">
+            <div class="volunteer-layout">
+                <!-- Volunteer Registration Form -->
+                <div class="form-container">
+                    <div class="form-card volunteer-form-card">
+                        <div class="form-card-header">
+                            <div class="form-card-icon volunteer-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+                            </div>
+                            <div>
+                                <h2>Volunteer Registration</h2>
+                                <p>Register as a service provider to help the community</p>
+                            </div>
+                        </div>
+
+                        <!-- Success Toast -->
+                        <div class="form-toast" id="volunteer-toast">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            <span>Volunteer registered successfully!</span>
+                        </div>
+
+                        <form id="volunteer-form" autocomplete="off" novalidate>
+                            <!-- Personal Info -->
+                            <div class="form-section-title">👤 Personal Information</div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="vol-name">Full Name <span class="required">*</span></label>
+                                    <input type="text" id="vol-name" placeholder="e.g. Priya Sharma" required>
+                                    <span class="field-error" id="err-vol-name"></span>
+                                </div>
+                                <div class="form-field">
+                                    <label for="vol-age">Age <span class="required">*</span></label>
+                                    <input type="number" id="vol-age" placeholder="e.g. 28" min="16" max="80" required>
+                                    <span class="field-error" id="err-vol-age"></span>
+                                </div>
+                                <div class="form-field">
+                                    <label for="vol-gender">Gender <span class="required">*</span></label>
+                                    <select id="vol-gender" required>
+                                        <option value="" disabled selected>Select gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <span class="field-error" id="err-vol-gender"></span>
+                                </div>
+                            </div>
+
+                            <!-- Contact -->
+                            <div class="form-section-title">📞 Contact Details</div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="vol-phone">Phone Number <span class="required">*</span></label>
+                                    <input type="tel" id="vol-phone" placeholder="e.g. 9876543210" required>
+                                    <span class="field-error" id="err-vol-phone"></span>
+                                </div>
+                                <div class="form-field">
+                                    <label for="vol-email">Email (optional)</label>
+                                    <input type="email" id="vol-email" placeholder="e.g. priya@email.com">
+                                    <span class="field-error" id="err-vol-email"></span>
+                                </div>
+                            </div>
+
+                            <!-- Service Area -->
+                            <div class="form-section-title">📍 Location & Date</div>
+                            <div class="form-row">
+                            <div class="form-field">
+                                <label for="vol-area">Village / Area <span class="required">*</span></label>
+                                <select id="vol-area" required>
+                                    <option value="" disabled selected>Select location</option>
+                                    <option value="DELHI">DELHI</option>
+                                    <option value="BANGALORE">BANGALORE</option>
+                                    <option value="CHENNAI">CHENNAI</option>
+                                    <option value="PUNE">PUNE</option>
+                                </select>
+                                <span class="field-error" id="err-vol-area"></span>
+                                </div>
+                                <div class="form-field">
+                                    <label for="vol-availability">Availability <span class="required">*</span></label>
+                                    <select id="vol-availability" required>
+                                        <option value="" disabled selected>Select availability</option>
+                                        <option value="Full-time">Full-time</option>
+                                        <option value="Part-time">Part-time</option>
+                                        <option value="Weekends Only">Weekends Only</option>
+                                        <option value="On-call">On-call</option>
+                                    </select>
+                                    <span class="field-error" id="err-vol-availability"></span>
+                                </div>
+                            </div>
+
+                            <!-- Issues they can handle -->
+                            <div class="form-section-title">🛠️ Issues You Can Handle</div>
+                            <div class="form-row">
+                                <div class="form-field full-width">
+                                    <label>Select one or more issues <span class="required">*</span></label>
+                                    <div class="issue-picker" id="vol-issue-picker">
+                                        <label class="issue-option">
+                                            <input type="checkbox" name="vol-issue" value="Health">
+                                            <span class="issue-chip"><span class="issue-chip-icon">🏥</span> Health</span>
+                                        </label>
+                                        <label class="issue-option">
+                                            <input type="checkbox" name="vol-issue" value="Education">
+                                            <span class="issue-chip"><span class="issue-chip-icon">📚</span> Education</span>
+                                        </label>
+                                        <label class="issue-option">
+                                            <input type="checkbox" name="vol-issue" value="Unemployment">
+                                            <span class="issue-chip"><span class="issue-chip-icon">💼</span> Unemployment</span>
+                                        </label>
+                                        <label class="issue-option">
+                                            <input type="checkbox" name="vol-issue" value="Water">
+                                            <span class="issue-chip"><span class="issue-chip-icon">💧</span> Water</span>
+                                        </label>
+                                        <label class="issue-option">
+                                            <input type="checkbox" name="vol-issue" value="Sanitation">
+                                            <span class="issue-chip"><span class="issue-chip-icon">🚽</span> Sanitation</span>
+                                        </label>
+                                        <label class="issue-option">
+                                            <input type="checkbox" name="vol-issue" value="Infrastructure">
+                                            <span class="issue-chip"><span class="issue-chip-icon">🏗️</span> Infrastructure</span>
+                                        </label>
+                                        <label class="issue-option">
+                                            <input type="checkbox" name="vol-issue" value="Poverty">
+                                            <span class="issue-chip"><span class="issue-chip-icon">🏚️</span> Poverty</span>
+                                        </label>
+                                        <label class="issue-option">
+                                            <input type="checkbox" name="vol-issue" value="Nutrition">
+                                            <span class="issue-chip"><span class="issue-chip-icon">🍎</span> Nutrition</span>
+                                        </label>
+                                    </div>
+                                    <span class="field-error" id="err-vol-issue"></span>
+                                </div>
+                            </div>
+
+                            <!-- Experience -->
+                            <div class="form-section-title">🌟 Experience & Skills</div>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="vol-experience">Years of Experience <span class="required">*</span></label>
+                                    <select id="vol-experience" required>
+                                        <option value="" disabled selected>Select experience</option>
+                                        <option value="Fresher">Fresher (0 years)</option>
+                                        <option value="1-2 years">1–2 years</option>
+                                        <option value="3-5 years">3–5 years</option>
+                                        <option value="5-10 years">5–10 years</option>
+                                        <option value="10+ years">10+ years</option>
+                                    </select>
+                                    <span class="field-error" id="err-vol-experience"></span>
+                                </div>
+                                <div class="form-field">
+                                    <label for="vol-qualification">Qualification</label>
+                                    <input type="text" id="vol-qualification" placeholder="e.g. ASHA Worker, B.Ed, MBBS">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-field full-width">
+                                    <label for="vol-bio">About Yourself (optional)</label>
+                                    <textarea id="vol-bio" rows="3" placeholder="Tell us about your motivation, skills, and how you can help the community..."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="reset" class="btn btn-secondary" id="btn-vol-reset">Clear Form</button>
+                                <button type="submit" class="btn btn-primary btn-volunteer" id="btn-vol-submit">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+                                    Register Volunteer
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Registered Volunteers List -->
+                <div class="volunteer-list-panel">
+                    <div class="volunteer-list-header">
+                        <h3>🧑‍🤝‍🧑 Registered Volunteers</h3>
+                        <span class="volunteer-count" id="volunteer-count">0 volunteers</span>
+                    </div>
+                    <div class="volunteer-cards" id="volunteer-cards">
+                        <!-- Dynamically rendered -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ ASSIGNMENTS SECTION ============ -->
+        <section class="content-section" id="section-assignments">
+            <div class="assignments-layout">
+                <div class="assignments-header">
+                    <div class="tabs">
+                        <button class="tab-btn active" id="tab-unassigned">Unassigned Issues</button>
+                        <button class="tab-btn" id="tab-assigned">Assigned Issues</button>
+                    </div>
+                </div>
+                <div class="assignments-list" id="assignments-list">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ OVERVIEW SECTION ============ -->
+        <section class="content-section" id="section-overview">
+            <div class="stats-grid">
+                <div class="stat-card" id="stat-total-responses">
+                    <div class="stat-icon icon-blue">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="stat-total-val">0</span>
+                        <span class="stat-label">Total Responses</span>
+                    </div>
+                    <div class="stat-trend up">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                        <span>Active</span>
+                    </div>
+                </div>
+
+                <div class="stat-card" id="stat-villages">
+                    <div class="stat-icon icon-violet">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="stat-villages-val">0</span>
+                        <span class="stat-label">Villages / Areas</span>
+                    </div>
+                    <div class="stat-trend up">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                        <span>Coverage</span>
+                    </div>
+                </div>
+
+                <div class="stat-card" id="stat-issues">
+                    <div class="stat-icon icon-amber">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="stat-issues-val">0</span>
+                        <span class="stat-label">Unique Issues</span>
+                    </div>
+                    <div class="stat-trend neutral">
+                        <span>Tracked</span>
+                    </div>
+                </div>
+
+                </div>
+            </div>
+
+            <!-- Overview Charts Row -->
+            <div class="charts-row single">
+                <div class="chart-card wide">
+                    <div class="chart-header">
+                        <h3>Issue Distribution</h3>
+                        <span class="chart-badge">Pie Chart</span>
+                    </div>
+                    <div class="chart-body tall">
+                        <canvas id="overview-pie-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trends Row -->
+            <div class="charts-row single">
+                <div class="chart-card wide">
+                    <div class="chart-header">
+                        <h3>Survey Trends Over Time</h3>
+                        <span class="chart-badge">Line Chart</span>
+                    </div>
+                    <div class="chart-body tall">
+                        <canvas id="overview-line-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ DATA TABLE SECTION ============ -->
+        <section class="content-section" id="section-data-table">
+            <div class="table-controls">
+                <div class="table-filters">
+                    <div class="filter-group">
+                        <label for="filter-location">Location</label>
+                        <select id="filter-location">
+                            <option value="">All Locations</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-issue">Issue</label>
+                        <select id="filter-issue">
+                            <option value="">All Issues</option>
+                        </select>
+                    </div>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-education">Education</label>
+                        <select id="filter-education">
+                            <option value="">All Education</option>
+                        </select>
+                    </div>
+                    <button class="btn-clear-filters" id="btn-clear-filters">Clear Filters</button>
+                </div>
+                <div class="table-meta">
+                    <span id="table-result-count">Showing 0 of 0 records</span>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="data-table" id="survey-table">
+                    <thead>
+                        <tr>
+                            <th data-sort="id" class="sortable" id="th-id">#<span class="sort-icon"></span></th>
+                            <th data-sort="name" class="sortable" id="th-name">Name<span class="sort-icon"></span></th>
+                            <th data-sort="age" class="sortable" id="th-age">Age<span class="sort-icon"></span></th>
+                            <th data-sort="gender" class="sortable" id="th-gender">Gender<span class="sort-icon"></span></th>
+                            <th data-sort="location" class="sortable" id="th-location">Location<span class="sort-icon"></span></th>
+                            <th data-sort="education" class="sortable" id="th-education">Education<span class="sort-icon"></span></th>
+                            <th data-sort="issue" class="sortable" id="th-issue">Issues<span class="sort-icon"></span></th>
+                            <th data-sort="date" class="sortable" id="th-date">Survey Date<span class="sort-icon"></span></th>
+                            <th>Verification</th>
+                            <th id="th-actions">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination" id="pagination">
+            </div>
+        </section>
+
+        <!-- ============ ANALYTICS SECTION ============ -->
+        <section class="content-section" id="section-analytics">
+            <div class="analytics-filters">
+                <div class="filter-group">
+                    <label for="analytics-location">Filter by Location</label>
+                    <select id="analytics-location">
+                        <option value="">All Locations</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="analytics-issue">Filter by Issue</label>
+                    <select id="analytics-issue">
+                        <option value="">All Issues</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="charts-row single">
+                <div class="chart-card wide">
+                    <div class="chart-header">
+                        <h3>Issue Distribution</h3>
+                        <span class="chart-badge">Doughnut</span>
+                    </div>
+                    <div class="chart-body tall">
+                        <canvas id="analytics-pie-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-row">
+                <div class="chart-card wide">
+                    <div class="chart-header">
+                        <h3>Responses Over Time</h3>
+                        <span class="chart-badge">Line</span>
+                    </div>
+                    <div class="chart-body tall">
+                        <canvas id="analytics-line-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-row">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Education Distribution</h3>
+                        <span class="chart-badge">Polar Area</span>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="analytics-education-chart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Age Demographics</h3>
+                        <span class="chart-badge">Radar</span>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="analytics-age-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+        <!-- ============ PATTERNS SECTION ============ -->
+        <section class="content-section" id="section-patterns">
+            <div class="patterns-container" id="patterns-container">
+                <!-- Dynamically populated -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Verification Modal -->
+    <div class="modal-overlay" id="verification-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
+        <div class="modal-content" style="background: #1e1e2e; border: 1px solid #333; border-radius: 12px; width: 90%; max-width: 500px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
+            <div class="modal-header" style="padding: 15px 20px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; color: #fff;">Verification Proof</h3>
+                <button class="btn-close-modal" id="btn-close-modal" style="background: none; border: none; color: #aaa; font-size: 24px; cursor: pointer; padding: 0;">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <img id="modal-img" src="" alt="Proof Image" style="width: 100%; border-radius: 8px; border: 1px solid #444;">
+                <div class="modal-coords" style="margin-top: 15px; padding: 12px; background: rgba(16, 185, 129, 0.1); border-left: 3px solid #10b981; border-radius: 6px; display: flex; align-items: center; gap: 10px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    <span id="modal-coords-text" style="color: #10b981; font-family: monospace; font-size: 13px;"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Integration -->
+     <script src="data.js"></script>
+    <script type="module" src="app-firebase.js"></script>
+    <script src="app.js"></script>
+    
+</body>
+</html>
